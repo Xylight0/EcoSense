@@ -1,6 +1,7 @@
 import { FaMobile, FaPlus, FaQuestionCircle, FaSitemap } from "react-icons/fa";
 import { FaChartSimple, FaGear, FaLocationDot } from "react-icons/fa6";
 import logo from "../assets/logo.png";
+import { Link, NavLink } from "react-router-dom";
 
 export default function Sidebar() {
   return (
@@ -12,24 +13,24 @@ export default function Sidebar() {
       </div>
       <div className="mt-6 p-6 flex flex-col flex-1 justify-between">
         <div className="flex flex-col gap-7">
-          <PageLinkElement text="Dashboard">
+          <PageLinkElement text="Dashboard" path="dashboard">
             <FaChartSimple />
           </PageLinkElement>
-          <PageLinkElement text="Devices">
+          <PageLinkElement text="Devices" path="devices">
             <FaMobile />
           </PageLinkElement>
-          <PageLinkElement text="Network">
+          <PageLinkElement text="Network" path="network">
             <FaSitemap />
           </PageLinkElement>
-          <PageLinkElement text="Map">
+          <PageLinkElement text="Map" path="map">
             <FaLocationDot />
           </PageLinkElement>
-          <PageLinkElement text="Help">
+          <PageLinkElement text="Help" path="help">
             <FaQuestionCircle />
           </PageLinkElement>
         </div>
         <div>
-          <PageLinkElement text="Settings">
+          <PageLinkElement text="Settings" path="settings">
             <FaGear />
           </PageLinkElement>
         </div>
@@ -40,23 +41,30 @@ export default function Sidebar() {
 
 function Logo() {
   return (
-    <div className="pr-4 pt-4 flex items-center gap-4">
-      <div className="w-16 flex flex-row">
-        <img src={logo} alt="Logo" />
+    <Link to={"/"}>
+      <div className="cursor-pointer pr-4 pt-4 flex items-center gap-4">
+        <div className="w-16 flex flex-row">
+          <img src={logo} alt="Logo" />
+        </div>
+        <div className="text-xl font-semibold">EcoSense</div>
       </div>
-      <div className="text-xl font-semibold">EcoSense</div>
-    </div>
+    </Link>
   );
 }
 
 // eslint-disable-next-line react/prop-types
-function PageLinkElement({ children, text }) {
+function PageLinkElement({ children, text, path }) {
   return (
-    <div className="group cursor-pointer flex flex-row text-custom-light-gray items-center gap-3 text-lg">
-      <div className="group-hover:text-custom-main">{children}</div>
-      <div className="group-hover:text-custom-gray group-hover:font-semibold">
-        {text}
+    <NavLink
+      to={path}
+      className={({ isActive }) =>
+        isActive ? "text-custom-main font-semibold" : "text-custom-light-gray"
+      }
+    >
+      <div className="cursor-pointer flex flex-row items-center gap-3 text-lg">
+        <div>{children}</div>
+        <div>{text}</div>
       </div>
-    </div>
+    </NavLink>
   );
 }
