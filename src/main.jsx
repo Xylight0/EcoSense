@@ -10,11 +10,19 @@ import Network from "./routes/network";
 import Map from "./routes/map";
 import Help from "./routes/help";
 import Settings from "./routes/settings";
+import ComingSoon from "./routes/coming-soon";
+import Login from "./routes/login";
+import { Protected } from "./routes/protected";
+import AuthContext from "./AuthConext";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Root />,
+    element: (
+      <Protected>
+        <Root />
+      </Protected>
+    ),
     errorElement: <ErrorPage />,
     children: [
       {
@@ -23,34 +31,35 @@ const router = createBrowserRouter([
       },
       {
         path: "devices",
-        element: <Devices />,
+        element: <ComingSoon />,
       },
       {
         path: "network",
-        element: <Network />,
+        element: <ComingSoon />,
       },
       {
         path: "map",
-        element: <Map />,
+        element: <ComingSoon />,
       },
       {
         path: "help",
-        element: <Help />,
+        element: <ComingSoon />,
       },
       {
         path: "settings",
-        element: <Settings />,
+        element: <ComingSoon />,
       },
     ],
   },
   {
-    path: "contacts/:contactId",
-    element: <div></div>,
+    path: "/login",
+    element: <Login />,
+    errorElement: <ErrorPage />,
   },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
+  <AuthContext>
     <RouterProvider router={router} />
-  </React.StrictMode>
+  </AuthContext>
 );

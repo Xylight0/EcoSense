@@ -7,7 +7,7 @@ export default function Root() {
   const outlet = useOutlet();
 
   return (
-    <div className="flex flex-row w-full h-full font-mon">
+    <div className="flex flex-row w-full h-full font-montserrat">
       <Sidebar />
       <div className="flex flex-col w-full h-full bg-custom-bg">
         <Topbar />

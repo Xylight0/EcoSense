@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+import { signOut } from "firebase/auth";
 import {
   FaBell,
   FaChevronDown,
@@ -7,6 +8,8 @@ import {
   FaMoon,
   FaUser,
 } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { auth } from "../firebase";
 
 export default function Topbar() {
   return (
@@ -29,14 +32,37 @@ export default function Topbar() {
         <FunctionalElement>
           <FaBell className="h-6 w-6" />
         </FunctionalElement>
-        <div className="flex group cursor-pointer items-center flex-row gap-3">
-          <div className="p-2 rounded-full bg-custom-main">
-            <FaUser className="h-3.5 w-3.5 text-white" />
-          </div>
-          <div className="text-custom-gray">Nicolas G.</div>
-          <FaChevronDown className="h-3.5 w-3.5 text-custom-light-gray group-hover:text-custom-gray" />
-        </div>
+        <ProfileElement />
       </div>
+    </div>
+  );
+}
+
+function ProfileElement() {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    signOut(auth)
+      .then(() => {
+        // Sign-out successful.
+        navigate("/login");
+        console.log("Signed out successfully");
+      })
+      .catch((error) => {
+        // An error happened.
+      });
+  };
+
+  return (
+    <div
+      onClick={handleLogout}
+      className="flex group cursor-pointer items-center flex-row gap-3"
+    >
+      <div className="p-2 rounded-full bg-custom-main">
+        <FaUser className="h-3.5 w-3.5 text-white" />
+      </div>
+      <div className="text-custom-gray">Nicolas G.</div>
+      <FaChevronDown className="h-3.5 w-3.5 text-custom-light-gray group-hover:text-custom-gray" />
     </div>
   );
 }

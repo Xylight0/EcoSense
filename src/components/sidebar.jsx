@@ -2,6 +2,7 @@ import { FaMobile, FaPlus, FaQuestionCircle, FaSitemap } from "react-icons/fa";
 import { FaChartSimple, FaGear, FaLocationDot } from "react-icons/fa6";
 import logo from "../assets/logo.png";
 import { Link, NavLink } from "react-router-dom";
+import { useState } from "react";
 
 export default function Sidebar() {
   return (
@@ -54,16 +55,17 @@ function Logo() {
 
 // eslint-disable-next-line react/prop-types
 function PageLinkElement({ children, text, path }) {
+  const [active, setActive] = useState(false);
   return (
     <NavLink
       to={path}
       className={({ isActive }) =>
-        isActive ? "text-custom-main font-semibold" : "text-custom-light-gray"
+        isActive ? setActive(true) : setActive(false)
       }
     >
-      <div className="cursor-pointer flex flex-row items-center gap-3 text-lg">
-        <div>{children}</div>
-        <div>{text}</div>
+      <div className="cursor-pointer flex flex-row items-center gap-3 text-lg text-custom-light-gray">
+        <div className={active && "text-custom-main"}>{children}</div>
+        <div className={active && "text-custom-gray font-semibold"}>{text}</div>
       </div>
     </NavLink>
   );
