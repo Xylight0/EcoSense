@@ -17,6 +17,9 @@ export default {
       backgroundImage: {
         "abstract-pattern": "url('./src/assets/abstract_bg.jpeg')",
       },
+      boxShadow: {
+        "custom-shadow": "5px 5px 5px 5px rgba(0, 0, 0, 0.05)",
+      },
     },
   },
   plugins: [],

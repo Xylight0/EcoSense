@@ -8,8 +8,10 @@ import {
   FaMoon,
   FaUser,
 } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
+import { useContext, useState } from "react";
+import { Context } from "../AuthConext";
 
 export default function Topbar() {
   return (
@@ -40,29 +42,66 @@ export default function Topbar() {
 
 function ProfileElement() {
   const navigate = useNavigate();
+  const [active, setActive] = useState(false);
+  const { user } = useContext(Context);
 
   const handleLogout = () => {
     signOut(auth)
       .then(() => {
-        // Sign-out successful.
         navigate("/login");
         console.log("Signed out successfully");
       })
       .catch((error) => {
-        // An error happened.
+        console.log(error);
       });
   };
 
+  console.log(user);
+
   return (
-    <div
-      onClick={handleLogout}
-      className="flex group cursor-pointer items-center flex-row gap-3"
-    >
-      <div className="p-2 rounded-full bg-custom-main">
-        <FaUser className="h-3.5 w-3.5 text-white" />
+    <div className="relative">
+      <div
+        onClick={() => setActive((cur) => !cur)}
+        className="flex group cursor-pointer items-center flex-row gap-3"
+      >
+        <div className="p-2 rounded-full bg-custom-main">
+          <FaUser className="h-3.5 w-3.5 text-white" />
+        </div>
+        <div className="text-custom-gray">Nicolas G.</div>
+        <FaChevronDown className="h-3.5 w-3.5 text-custom-light-gray group-hover:text-custom-gray" />
       </div>
-      <div className="text-custom-gray">Nicolas G.</div>
-      <FaChevronDown className="h-3.5 w-3.5 text-custom-light-gray group-hover:text-custom-gray" />
+      {active && (
+        <div className="absolute right-0 top-12 z-10 bg-white divide-y divide-gray-100 rounded-lg shadow-md min-w-52">
+          <div className="px-4 py-3 text-sm text-gray-900">
+            <div>Bonnie Green</div>
+            <div className="font-medium truncate">{user.email}</div>
+          </div>
+          <div
+            className="py-2 text-sm text-gray-700"
+            aria-labelledby="dropdownInformationButton"
+          >
+            <Link to="/dashboard">
+              <a href="#" className="block px-4 py-2 hover:bg-gray-100">
+                Dashboard
+              </a>
+            </Link>
+            <Link to="/settings">
+              <a href="#" className="block px-4 py-2 hover:bg-gray-100">
+                Settings
+              </a>
+            </Link>
+           
+          </div>
+          <div onClick={handleLogout} className="py-2">
+            <a
+              href="#"
+              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            >
+              Sign out
+            </a>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
