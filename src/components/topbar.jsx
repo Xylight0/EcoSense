@@ -10,8 +10,9 @@ import {
 } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
-import { useContext, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { Context } from "../AuthConext";
+import useOutsideAlerter from "../hooks/useOutsideAlerter";
 
 export default function Topbar() {
   return (
@@ -44,6 +45,8 @@ function ProfileElement() {
   const navigate = useNavigate();
   const [active, setActive] = useState(false);
   const { user } = useContext(Context);
+  const wrapperRef = useRef(null);
+  useOutsideAlerter({ ref: wrapperRef, stateFnc: setActive });
 
   const handleLogout = () => {
     signOut(auth)
@@ -55,8 +58,6 @@ function ProfileElement() {
         console.log(error);
       });
   };
-
-  console.log(user);
 
   return (
     <div className="relative">
@@ -71,7 +72,10 @@ function ProfileElement() {
         <FaChevronDown className="h-3.5 w-3.5 text-custom-light-gray group-hover:text-custom-gray" />
       </div>
       {active && (
-        <div className="absolute right-0 top-12 z-10 bg-white divide-y divide-gray-100 rounded-lg shadow-md min-w-52">
+        <div
+          ref={wrapperRef}
+          className="absolute right-0 top-12 z-10 bg-white divide-y divide-gray-100 rounded-lg shadow-md min-w-52"
+        >
           <div className="px-4 py-3 text-sm text-gray-900">
             <div>Bonnie Green</div>
             <div className="font-medium truncate">{user.email}</div>
@@ -80,17 +84,12 @@ function ProfileElement() {
             className="py-2 text-sm text-gray-700"
             aria-labelledby="dropdownInformationButton"
           >
-            <Link to="/dashboard">
-              <a href="#" className="block px-4 py-2 hover:bg-gray-100">
-                Dashboard
-              </a>
+            <Link onClick={() => setActive(false)} to="/dashboard">
+              <div className="block px-4 py-2 hover:bg-gray-100">Dashboard</div>
             </Link>
-            <Link to="/settings">
-              <a href="#" className="block px-4 py-2 hover:bg-gray-100">
-                Settings
-              </a>
+            <Link onClick={() => setActive(false)} to="/settings">
+              <div className="block px-4 py-2 hover:bg-gray-100">Settings</div>
             </Link>
-           
           </div>
           <div onClick={handleLogout} className="py-2">
             <a
