@@ -9,7 +9,7 @@ export default function Root() {
   return (
     <div className="flex flex-row w-full h-full font-montserrat">
       <Sidebar />
-      <div className="flex flex-col w-full h-full bg-custom-bg">
+      <div className="flex flex-col overflow-scroll w-full h-full bg-custom-bg">
         <Topbar />
         {outlet || <Illustration />}
       </div>

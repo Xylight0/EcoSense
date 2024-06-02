@@ -68,7 +68,7 @@ function ProfileElement() {
         <div className="p-2 rounded-full bg-custom-main">
           <FaUser className="h-3.5 w-3.5 text-white" />
         </div>
-        <div className="text-custom-gray">Nicolas G.</div>
+        <div className="text-custom-gray">{user.displayName}</div>
         <FaChevronDown className="h-3.5 w-3.5 text-custom-light-gray group-hover:text-custom-gray" />
       </div>
       {active && (
@@ -77,7 +77,7 @@ function ProfileElement() {
           className="absolute right-0 top-12 z-10 bg-white divide-y divide-gray-100 rounded-lg shadow-md min-w-52"
         >
           <div className="px-4 py-3 text-sm text-gray-900">
-            <div>Bonnie Green</div>
+            <div>{user.displayName}</div>
             <div className="font-medium truncate">{user.email}</div>
           </div>
           <div

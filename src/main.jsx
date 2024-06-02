@@ -14,6 +14,7 @@ import ComingSoon from "./routes/coming-soon";
 import Login from "./routes/login";
 import { Protected } from "./routes/protected";
 import AuthContext from "./AuthConext";
+import Registration from "./routes/registration";
 
 const router = createBrowserRouter([
   {
@@ -54,6 +55,11 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/registration",
+    element: <Registration />,
     errorElement: <ErrorPage />,
   },
 ]);

@@ -1,13 +1,15 @@
-import { FaEnvelope, FaKey } from "react-icons/fa";
+import { FaEnvelope, FaKey, FaUser } from "react-icons/fa";
 import logo from "../assets/logo.png";
 import dashboardPreview from "../assets/dashboard_preview.png";
 import abstractBG from "../assets/abstract_bg.jpeg";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { auth, db } from "../firebase";
+import { serverTimestamp } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 
-export default function Login() {
+export default function Registration() {
   return (
     <div className="font-montserrat w-full h-full flex flex-row flex-1">
       <div className="flex-1 flex flex-col justify-center items-center">
@@ -27,6 +29,8 @@ function LoginModal() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -49,16 +53,35 @@ function LoginModal() {
     if (!email || !password) return;
 
     setLoading(true);
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
+
+    createUserWithEmailAndPassword(auth, email, password)
+      .then(async (data) => {
+        let uid = data.user.uid;
+
+        const newUser = {
+          firstName,
+          lastName,
+          email,
+          role: "owner",
+          createdAt: serverTimestamp(),
+          devices: [],
+        };
+
+        await setDoc(doc(db, "users", uid), newUser);
+
+        await updateProfile(data.user, {
+          displayName: firstName + " " + lastName,
+        }).catch((err) => console.log(err));
+
+        console.log("Success: new user created.");
         navigate("/");
-        console.log(user);
       })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorCode, errorMessage);
+      .catch((err) => {
+        if (err.code === "auth/email-already-in-use") {
+          return console.log("Email is already in use");
+        } else {
+          return console.log(err);
+        }
       })
       .finally(() => setLoading(false));
   };
@@ -70,12 +93,54 @@ function LoginModal() {
         <div className="font-semibold text-3xl">EcoSense</div>
       </div>
 
-      <div className="font-semibold text-3xl">Login into your account.</div>
+      <div className="font-semibold text-3xl">Create new account.</div>
       <div className="font-normal text-lg mt-2">
         Enter your E-Mail and Password to login.
       </div>
 
       <div className="mt-10">
+        <label
+          htmlFor="input-first-name"
+          className="block mb-2 text-sm font-medium text-custom-gray"
+        >
+          Your First Name
+        </label>
+        <div className="relative mb-6">
+          <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+            <FaUser className="text-custom-gray" />
+          </div>
+          <input
+            type="email"
+            id="input-first-name"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-custom-main focus:border-custom-main block w-full ps-10 p-2.5"
+            placeholder="First Name"
+            onChange={(e) => setFirstName(e.target.value)}
+          />
+        </div>
+      </div>
+
+      <div>
+        <label
+          htmlFor="input-last-name"
+          className="block mb-2 text-sm font-medium text-custom-gray"
+        >
+          Your Last Name
+        </label>
+        <div className="relative mb-6">
+          <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+            <FaUser className="text-custom-gray" />
+          </div>
+          <input
+            type="email"
+            id="input-last-name"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-custom-main focus:border-custom-main block w-full ps-10 p-2.5"
+            placeholder="Last Name"
+            onChange={(e) => setLastName(e.target.value)}
+          />
+        </div>
+      </div>
+
+      <div>
         <label
           htmlFor="input-email"
           className="block mb-2 text-sm font-medium text-custom-gray"
@@ -102,7 +167,7 @@ function LoginModal() {
       >
         Your Password
       </label>
-      <div className="relative">
+      <div className="relative mb-8">
         <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
           <FaKey className="text-custom-gray" />
         </div>
@@ -113,9 +178,6 @@ function LoginModal() {
           placeholder="**********"
           onChange={(e) => setPassword(e.target.value)}
         />
-      </div>
-      <div className="mb-6 mt-2 cursor-pointer font-medium text-sm text-right text-custom-main">
-        Forgot password?
       </div>
 
       <div
@@ -145,12 +207,8 @@ function LoginModal() {
             <span className="sr-only">Loading...</span>
           </div>
         ) : (
-          <div>Login</div>
+          <div>Create</div>
         )}
-      </div>
-      <div className="flex flex-row mt-4 text-sm justify-center gap-1">
-        Don&#39;t have an account yet?{" "}
-        <Link to="/registration" className="cursor-pointer font-medium text-custom-main">Sign Up</Link>
       </div>
     </div>
   );

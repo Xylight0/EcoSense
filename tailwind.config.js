@@ -9,7 +9,10 @@ export default {
         "custom-light-gray": "#BBBBBB",
         "custom-gray": "#63656e",
         "custom-main": "#6647E2",
+        "custom-light-main": "#F4F2FF",
         "custom-main-dark": "#4a34a3",
+        "custom-green": "#AEFFCF",
+        "custom-red": "#F6B3B3",
       },
       fontFamily: {
         montserrat: ["Montserrat"],
