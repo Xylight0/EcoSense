@@ -53,7 +53,6 @@ function LoginModal() {
       .then((userCredential) => {
         const user = userCredential.user;
         navigate("/");
-        console.log(user);
       })
       .catch((error) => {
         const errorCode = error.code;

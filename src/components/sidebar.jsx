@@ -53,12 +53,9 @@ function AddDevice() {
   const [deviceID, setDeviceID] = useState("");
   const { user } = useContext(Context);
 
-  console.log(deviceID);
   useEffect(() => {
     setDeviceID("");
   }, [active]);
-
-  console.log(user)
 
   async function addDeviceHandler() {
     setLoading(true);

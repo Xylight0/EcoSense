@@ -3,7 +3,6 @@ import { signOut } from "firebase/auth";
 import {
   FaBell,
   FaChevronDown,
-  FaClock,
   FaMobile,
   FaMoon,
   FaUser,
@@ -18,14 +17,11 @@ export default function Topbar() {
   return (
     <div className="flex flex-row items-center justify-between p-6 w-full border-b-[1px] border-custom-border bg-white">
       <div className="flex flex-row gap-4">
-        <StatusElement text="Online">
-          <div className="w-3 h-3 rounded-full bg-green-600" />
+        <StatusElement text="No Issues">
+          <div className="w-3 h-3 rounded-full bg-green-500" />
         </StatusElement>
         <StatusElement text="13">
           <FaMobile className="text-custom-gray" />
-        </StatusElement>
-        <StatusElement text="15:34">
-          <FaClock className="text-custom-gray" />
         </StatusElement>
       </div>
       <div className="flex flex-row items-center gap-8">
@@ -92,12 +88,9 @@ function ProfileElement() {
             </Link>
           </div>
           <div onClick={handleLogout} className="py-2">
-            <a
-              href="#"
-              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-            >
+            <div className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
               Sign out
-            </a>
+            </div>
           </div>
         </div>
       )}
@@ -107,7 +100,7 @@ function ProfileElement() {
 
 function StatusElement({ children, text }) {
   return (
-    <div className="bg-[#F0F1F4] px-3 py-1 rounded-lg flex flex-row items-center gap-2">
+    <div className="bg-custom-very-light-gray px-3 py-1 rounded-lg flex flex-row items-center gap-2">
       <div>{children}</div>
       <div>{text}</div>
     </div>

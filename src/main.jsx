@@ -1,15 +1,14 @@
-import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 import Root from "./routes/root";
 import ErrorPage from "./routes/error-page";
 import Dashboard from "./routes/dashboard";
-import Devices from "./routes/devices";
+/* import Devices from "./routes/devices";
 import Network from "./routes/network";
 import Map from "./routes/map";
 import Help from "./routes/help";
-import Settings from "./routes/settings";
+import Settings from "./routes/settings"; */
 import ComingSoon from "./routes/coming-soon";
 import Login from "./routes/login";
 import { Protected } from "./routes/protected";

@@ -7,6 +7,7 @@ export default {
         "custom-bg": "#F6F7F8",
         "custom-border": "#D6D6D6",
         "custom-light-gray": "#BBBBBB",
+        "custom-very-light-gray": "#F0F1F4",
         "custom-gray": "#63656e",
         "custom-main": "#6647E2",
         "custom-light-main": "#F4F2FF",
