@@ -61,6 +61,7 @@ export default function Dashboard() {
           deviceIDs={deviceIDs}
           setCurrentDeviceID={setCurrentDeviceID}
           currentDeviceID={currentDeviceID}
+          lastElement={deviceData?.temperature?.slice(-1)[0]}
         />
       </div>
       <div className="flex flex-row gap-4">
@@ -98,21 +99,55 @@ export default function Dashboard() {
   );
 }
 
-function ToolBarElement({ deviceIDs, setCurrentDeviceID, currentDeviceID }) {
+function ToolBarElement({
+  deviceIDs,
+  setCurrentDeviceID,
+  currentDeviceID,
+  lastElement,
+}) {
   const [active, setActive] = useState(false);
   const wrapperRef = useRef(null);
   useOutsideAlerter({ ref: wrapperRef, stateFnc: setActive });
 
+  function renderIDs() {
+    return deviceIDs.map((id) => {
+      return (
+        <div
+          key={id}
+          onClick={() => setCurrentDeviceID(id)}
+          className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+        >
+          {id}
+        </div>
+      );
+    });
+  }
+
+  const deviceOnline = (timestamp) => {
+    const now = moment();
+    const time = moment.unix(timestamp);
+    return now.diff(time, "minutes") < 1;
+  };
+
   return (
     <div className="p-4 flex flex-row bg-white rounded-2xl shadow-sm justify-between">
       <div className="flex flex-row gap-4 items-center">
-        <StatusElement text="Online">
-          <div className="w-3 h-3 rounded-full bg-green-500" />
+        <StatusElement text={deviceOnline(lastElement?.time) ? "Online" : "Offline"}>
+          <div
+            className={`w-3 h-3 rounded-full ${
+              currentDeviceID === "Select Device" ||
+              !deviceOnline(lastElement?.time)
+                ? "bg-red-400"
+                : "bg-green-500"
+            }`}
+          />
         </StatusElement>
-        <StatusElement text="1">
+        <StatusElement text={currentDeviceID === "Select Device" ? 0 : 1}>
           <FaMobile className="text-custom-gray" />
         </StatusElement>
-        <StatusElement text="15:34">
+        <StatusElement
+          text={lastElement ? moment.unix(lastElement?.time).format("DD/MM/YY, h:m  m A") : "No Date"}
+        >
           <FaClock className="text-custom-gray" />
         </StatusElement>
       </div>
@@ -132,19 +167,7 @@ function ToolBarElement({ deviceIDs, setCurrentDeviceID, currentDeviceID }) {
               <div className="px-4 py-3 text-gray-900 font-medium">
                 <div>Your Devices</div>
               </div>
-              <div className="py-2">
-                {deviceIDs.map((id) => {
-                  return (
-                    <div
-                      key={id}
-                      onClick={() => setCurrentDeviceID(id)}
-                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
-                    >
-                      {id}
-                    </div>
-                  );
-                })}
-              </div>
+              <div className="py-2">{renderIDs()}</div>
             </div>
           )}
         </div>
@@ -238,7 +261,8 @@ function LineChartElement({ data }) {
           Combined Trendline
         </div>
         <div className="bg-custom-very-light-gray cursor-pointer px-3 py-1 rounded-md flex flex-row items-center gap-3">
-          All <FaChevronDown className="text-custom-gray w-3.5 h-3.5" />
+          30min
+          <FaChevronDown className="text-custom-gray w-3.5 h-3.5" />
         </div>
       </div>
       <div className="flex flex-1 justify-center items-center">
@@ -257,12 +281,12 @@ function LineChartElement({ data }) {
                 {
                   data: showHumid ? dataPoints?.dataPointsHumid : [],
                   label: "Humidity (%)",
-                  color: "Orange",
+                  color: "Blue",
                 },
                 {
                   data: showAir ? dataPoints?.dataPointsAir : [],
-                  label: "Air Qualit (%)",
-                  color: "Blue",
+                  label: "Air Quality (%)",
+                  color: "Orange",
                 },
               ]}
               xAxis={[{ scaleType: "point", data: dataXAxis }]}
@@ -278,7 +302,7 @@ function LineChartElement({ data }) {
         >
           <div
             className={`w-3 h-3 rounded-full ${
-              showTemp ? "bg-red-500" : "bg-red-200"
+              showTemp ? "bg-red-400" : "bg-red-200"
             }`}
           />
           Temperature (°C)
@@ -289,7 +313,7 @@ function LineChartElement({ data }) {
         >
           <div
             className={`w-3 h-3 rounded-full ${
-              showHumid ? "bg-green-500" : "bg-green-200"
+              showHumid ? "bg-blue-400" : "bg-blue-200"
             }`}
           />
           Humidity (%)
@@ -300,7 +324,7 @@ function LineChartElement({ data }) {
         >
           <div
             className={`w-3 h-3 rounded-full ${
-              showAir ? "bg-orange-500" : "bg-orange-200"
+              showAir ? "bg-orange-400" : "bg-orange-200"
             }`}
           />
           Air Quality (%)
@@ -335,7 +359,7 @@ function GaugeChartElement({
       </div>
       <div className="relative my-2">
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 font-medium text-xl">
-          {value + symbol || 0 + symbol}
+          {(value || 0) + symbol}
         </div>
         <Gauge
           width={200}
