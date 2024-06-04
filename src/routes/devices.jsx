@@ -42,9 +42,11 @@ export default function Devices() {
 
   function renderDeviceList() {
     const deviceOnline = (timestamp) => {
+      if (!timestamp) return;
+      timestamp = timestamp[0].time;
       const now = moment();
       const time = moment.unix(timestamp);
-      return now.diff(time, "minutes") < 1;
+      return now.diff(time, "minutes") < 1.2;
     };
 
     return allDeviceData.map((device, index) => {

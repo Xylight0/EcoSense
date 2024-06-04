@@ -13,10 +13,13 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { Context } from "../AuthConext";
 import useOutsideAlerter from "../hooks/useOutsideAlerter";
 import { getRealtimeDocumentData } from "../api/getRealtimeDocumentData";
+import getDocumentData from "../api/getDocumentData";
+import moment from "moment";
 
 export default function Topbar() {
-  const [deviceIDs, setDeviceIDs] = useState(0);
+  const [deviceIDs, setDeviceIDs] = useState([]);
   const { user } = useContext(Context);
+  const [deviceStatus, setDeviceStatus] = useState([]);
 
   useEffect(() => {
     const unsubscribe = getRealtimeDocumentData(
@@ -31,18 +34,81 @@ export default function Topbar() {
         unsubscribe();
       }
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const [allDeviceData, setAllDeviceData] = useState([]);
+
+  useEffect(() => {
+    getAllDeviceData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deviceIDs]);
+
+  async function getAllDeviceData() {
+    const newArr = [];
+    for (let i = 0; i < deviceIDs.length; i++) {
+      let deviceData = await getDocumentData({
+        collectionName: "devices",
+        id: deviceIDs[i],
+      });
+
+      newArr.push({ data: deviceData, id: deviceIDs[i] });
+    }
+
+    setAllDeviceData(newArr);
+  }
+
+  useEffect(() => {
+    const newArr = [];
+    for (let i = 0; i < allDeviceData.length; i++) {
+      const status = deviceOnline(
+        allDeviceData[i]?.data?.temperature?.slice(-1)[0]
+      );
+      newArr.push(status || false);
+    }
+    setDeviceStatus(newArr);
+  }, [allDeviceData]);
+
+  const deviceOnline = (timestamp) => {
+    if (!timestamp) return;
+    timestamp = timestamp?.time;
+    const now = moment();
+    const time = moment.unix(timestamp);
+    return now.diff(time, "minutes") < 1.2;
+  };
+
+  function getStatusText() {
+    if (deviceStatus?.length === 0) return "No Devices Connected";
+    console.log(deviceStatus);
+    return deviceStatus?.includes(false)
+      ? deviceStatus?.includes(true)
+        ? "System Issues"
+        : "System Offline"
+      : "System Running";
+  }
+
+  function getStatusColor() {
+    if (deviceStatus?.length === 0) return "bg-gray-500";
+    return deviceStatus?.includes(false)
+      ? deviceStatus?.includes(true)
+        ? "bg-orange-400"
+        : "bg-red-400"
+      : "bg-green-400";
+  }
 
   return (
     <div className="flex flex-row items-center justify-between p-6 w-full border-b-[1px] border-custom-border bg-white">
       <div className="flex flex-row gap-4">
-        <StatusElement text="No Issues">
-          <div className="w-3 h-3 rounded-full bg-green-500" />
-        </StatusElement>
-        <StatusElement text={deviceIDs?.length}>
-          <FaMobile className="text-custom-gray" />
-        </StatusElement>
+        <Link to="devices">
+          <StatusElement text={getStatusText()}>
+            <div className={"w-3 h-3 rounded-full " + getStatusColor()} />
+          </StatusElement>
+        </Link>
+        <Link to="devices">
+          <StatusElement text={deviceIDs?.length}>
+            <FaMobile className="text-custom-gray" />
+          </StatusElement>
+        </Link>
       </div>
       <div className="flex flex-row items-center gap-8">
         <FunctionalElement>
@@ -120,7 +186,7 @@ function ProfileElement() {
 
 function StatusElement({ children, text }) {
   return (
-    <div className="bg-custom-very-light-gray px-3 py-1 rounded-lg flex flex-row items-center gap-2">
+    <div className="bg-custom-very-light-gray cursor-pointer px-3 py-1 rounded-lg flex flex-row items-center gap-2">
       <div>{children}</div>
       <div>{text}</div>
     </div>

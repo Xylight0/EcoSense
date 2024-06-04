@@ -137,7 +137,7 @@ function ToolBarElement({
   const deviceOnline = (timestamp) => {
     const now = moment();
     const time = moment.unix(timestamp);
-    return now.diff(time, "minutes") < 1;
+    return now.diff(time, "minutes") < 1.2;
   };
 
   return (
