@@ -15,14 +15,14 @@ import useOutsideAlerter from "../hooks/useOutsideAlerter";
 import { getRealtimeDocumentData } from "../api/getRealtimeDocumentData";
 
 export default function Topbar() {
-  const [deviceCount, setDeviceCount] = useState(0);
+  const [deviceIDs, setDeviceIDs] = useState(0);
   const { user } = useContext(Context);
 
   useEffect(() => {
     const unsubscribe = getRealtimeDocumentData(
       { collectionName: "users", deviceID: user?.uid },
       (data) => {
-        if (data) setDeviceCount(data?.devices?.length);
+        if (data) setDeviceIDs(data?.devices);
       }
     );
 
@@ -39,7 +39,7 @@ export default function Topbar() {
         <StatusElement text="No Issues">
           <div className="w-3 h-3 rounded-full bg-green-500" />
         </StatusElement>
-        <StatusElement text={deviceCount}>
+        <StatusElement text={deviceIDs?.length}>
           <FaMobile className="text-custom-gray" />
         </StatusElement>
       </div>

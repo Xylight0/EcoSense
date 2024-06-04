@@ -1,5 +1,4 @@
 import {
-  FaIdCard,
   FaKey,
   FaMobile,
   FaPlus,
@@ -11,8 +10,9 @@ import logo from "../assets/logo.png";
 import { Link, NavLink } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { db } from "../firebase";
-import { FieldValue, arrayUnion, doc, updateDoc } from "firebase/firestore";
+import { arrayUnion, doc, updateDoc } from "firebase/firestore";
 import { Context } from "../AuthConext";
+import { toast } from "react-toastify";
 
 export default function Sidebar() {
   return (
@@ -57,10 +57,13 @@ function AddDevice() {
     setDeviceID("");
   }, [active]);
 
+  const notify = () => toast.success("Device was added successfully!");
+
   async function addDeviceHandler() {
     setLoading(true);
     setActive(false);
     setLoading(false);
+    notify();
 
     try {
       const userRef = doc(db, "users", user.uid);

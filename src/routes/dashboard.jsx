@@ -22,6 +22,7 @@ export default function Dashboard() {
       { collectionName: "devices", deviceID: currentDeviceID },
       (data) => {
         if (data) setDeviceData(data);
+        else setDeviceData([]);
       }
     );
 
@@ -117,7 +118,8 @@ function ToolBarElement({
   });
 
   function renderIDs() {
-    if (deviceIDs.length === 0) return <div className="px-4 py-2 font-light">No devices found</div>;
+    if (deviceIDs.length === 0)
+      return <div className="px-4 py-2 font-light">No devices found</div>;
 
     return deviceIDs.map((id) => {
       return (
@@ -159,7 +161,7 @@ function ToolBarElement({
         <StatusElement
           text={
             lastElement
-              ? moment.unix(lastElement?.time).format("DD/MM/YY, h:m  m A")
+              ? moment.unix(lastElement?.time).format("DD/MM/YY, hh:mm A")
               : "No Date"
           }
         >

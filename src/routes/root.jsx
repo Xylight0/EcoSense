@@ -2,6 +2,8 @@ import Sidebar from "../components/sidebar";
 import Topbar from "../components/topbar";
 import welcome_illustration from "../assets/dashboard_start_screen.png";
 import { useOutlet } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Root() {
   const outlet = useOutlet();
@@ -13,6 +15,7 @@ export default function Root() {
         <Topbar />
         {outlet || <Illustration />}
       </div>
+      <ToastContainer position="bottom-right" />
     </div>
   );
 }
