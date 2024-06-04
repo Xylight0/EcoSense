@@ -2,7 +2,7 @@ import { FaEnvelope, FaKey, FaUser } from "react-icons/fa";
 import logo from "../assets/logo.png";
 import dashboardPreview from "../assets/dashboard_preview.png";
 import abstractBG from "../assets/abstract_bg.jpeg";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth, db } from "../firebase";
@@ -209,6 +209,15 @@ function LoginModal() {
         ) : (
           <div>Create</div>
         )}
+      </div>
+      <div className="flex flex-row mt-4 text-sm justify-center gap-1">
+        Already have an account?{" "}
+        <Link
+          to="/login"
+          className="cursor-pointer font-medium text-custom-main"
+        >
+          Login
+        </Link>
       </div>
     </div>
   );

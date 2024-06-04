@@ -50,8 +50,7 @@ function LoginModal() {
 
     setLoading(true);
     signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
+      .then(() => {
         navigate("/");
       })
       .catch((error) => {
@@ -149,7 +148,12 @@ function LoginModal() {
       </div>
       <div className="flex flex-row mt-4 text-sm justify-center gap-1">
         Don&#39;t have an account yet?{" "}
-        <Link to="/registration" className="cursor-pointer font-medium text-custom-main">Sign Up</Link>
+        <Link
+          to="/registration"
+          className="cursor-pointer font-medium text-custom-main"
+        >
+          Sign Up
+        </Link>
       </div>
     </div>
   );
