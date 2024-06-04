@@ -9,18 +9,37 @@ import {
 } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
-import { useContext, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Context } from "../AuthConext";
 import useOutsideAlerter from "../hooks/useOutsideAlerter";
+import { getRealtimeDocumentData } from "../api/getRealtimeDocumentData";
 
 export default function Topbar() {
+  const [deviceCount, setDeviceCount] = useState(0);
+  const { user } = useContext(Context);
+
+  useEffect(() => {
+    const unsubscribe = getRealtimeDocumentData(
+      { collectionName: "users", deviceID: user?.uid },
+      (data) => {
+        if (data) setDeviceCount(data?.devices?.length);
+      }
+    );
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, []);
+
   return (
     <div className="flex flex-row items-center justify-between p-6 w-full border-b-[1px] border-custom-border bg-white">
       <div className="flex flex-row gap-4">
         <StatusElement text="No Issues">
           <div className="w-3 h-3 rounded-full bg-green-500" />
         </StatusElement>
-        <StatusElement text="13">
+        <StatusElement text={deviceCount}>
           <FaMobile className="text-custom-gray" />
         </StatusElement>
       </div>

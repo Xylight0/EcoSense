@@ -4,7 +4,6 @@ import { Gauge, gaugeClasses } from "@mui/x-charts/Gauge";
 import { useContext, useEffect, useRef, useState } from "react";
 import { FaChevronDown, FaClock, FaMobile, FaWind } from "react-icons/fa";
 import { FaArrowTrendUp, FaDroplet, FaTemperatureFull } from "react-icons/fa6";
-import getAllDocumentIds from "../api/getAllDocumentIds";
 import useOutsideAlerter from "../hooks/useOutsideAlerter";
 import moment from "moment";
 import { getRealtimeDocumentData } from "../api/getRealtimeDocumentData";
@@ -104,7 +103,6 @@ function ToolBarElement({
   const [active, setActive] = useState(false);
   const wrapperRef = useRef(null);
   useOutsideAlerter({ ref: wrapperRef, stateFnc: setActive });
-
   const { user } = useContext(Context);
 
   useEffect(() => {
