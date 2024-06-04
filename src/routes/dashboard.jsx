@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from "react";
 import { FaChevronDown, FaClock, FaMobile, FaWind } from "react-icons/fa";
 import { FaArrowTrendUp, FaDroplet, FaTemperatureFull } from "react-icons/fa6";
 import getAllDocumentIds from "../api/getAllDocumentIds";
-import getDocumentData from "../api/getDocumentData";
 import useOutsideAlerter from "../hooks/useOutsideAlerter";
 import moment from "moment";
 import { getRealtimeDocumentData } from "../api/getRealtimeDocumentData";
@@ -28,7 +27,7 @@ export default function Dashboard() {
     const unsubscribe = getRealtimeDocumentData(
       { collectionName: "devices", deviceID: currentDeviceID },
       (data) => {
-        setDeviceData(data);
+        if (data) setDeviceData(data);
       }
     );
 
@@ -70,7 +69,7 @@ export default function Dashboard() {
           percentage={0}
           valueMax={50}
           value={calcAverage(
-            deviceData?.temperature?.map((elem) => +elem.data)
+            deviceData?.temperature?.map((elem) => +elem?.data)
           )}
           symbol="°C"
           icon={<FaTemperatureFull className="w-5 h-5 text-custom-main" />}
@@ -79,7 +78,7 @@ export default function Dashboard() {
           title="Average Humidity"
           percentage={0}
           valueMax={100}
-          value={calcAverage(deviceData?.humidity?.map((elem) => +elem.data))}
+          value={calcAverage(deviceData?.humidity?.map((elem) => +elem?.data))}
           symbol="%"
           icon={<FaDroplet className="w-4 h-4 text-custom-main" />}
         />
@@ -87,7 +86,7 @@ export default function Dashboard() {
           title="Average Air Quality"
           percentage={0}
           valueMax={100}
-          value={calcAverage(deviceData?.air_qual?.map((elem) => +elem.data))}
+          value={calcAverage(deviceData?.air_qual?.map((elem) => +elem?.data))}
           symbol="%"
           icon={<FaWind className="w-4 h-4 text-custom-main" />}
         />
@@ -132,7 +131,9 @@ function ToolBarElement({
   return (
     <div className="p-4 flex flex-row bg-white rounded-2xl shadow-sm justify-between">
       <div className="flex flex-row gap-4 items-center">
-        <StatusElement text={deviceOnline(lastElement?.time) ? "Online" : "Offline"}>
+        <StatusElement
+          text={deviceOnline(lastElement?.time) ? "Online" : "Offline"}
+        >
           <div
             className={`w-3 h-3 rounded-full ${
               currentDeviceID === "Select Device" ||
@@ -146,7 +147,11 @@ function ToolBarElement({
           <FaMobile className="text-custom-gray" />
         </StatusElement>
         <StatusElement
-          text={lastElement ? moment.unix(lastElement?.time).format("DD/MM/YY, h:m  m A") : "No Date"}
+          text={
+            lastElement
+              ? moment.unix(lastElement?.time).format("DD/MM/YY, h:m  m A")
+              : "No Date"
+          }
         >
           <FaClock className="text-custom-gray" />
         </StatusElement>
@@ -253,6 +258,11 @@ function LineChartElement({ data }) {
     setDataXAxis(timestamps);
   };
 
+  const showChart =
+    dataPoints?.dataPointsTemp?.length > 1 ||
+    dataPoints?.dataPointsHumid?.length > 1 ||
+    dataPoints?.dataPointsAir?.length > 1;
+
   return (
     <div className="p-5 flex flex-col bg-white rounded-2xl shadow-sm">
       <div className="flex flex-row justify-between items-center">
@@ -266,34 +276,34 @@ function LineChartElement({ data }) {
         </div>
       </div>
       <div className="flex flex-1 justify-center items-center">
-        {dataPoints?.dataPointsTemp &&
-          dataPoints?.dataPointsHumid &&
-          dataPoints?.dataPointsAir && (
-            <LineChart
-              width={710}
-              height={320}
-              series={[
-                {
-                  data: showTemp ? dataPoints?.dataPointsTemp : [],
-                  label: "Temperature (°C)",
-                  color: "Red",
-                },
-                {
-                  data: showHumid ? dataPoints?.dataPointsHumid : [],
-                  label: "Humidity (%)",
-                  color: "Blue",
-                },
-                {
-                  data: showAir ? dataPoints?.dataPointsAir : [],
-                  label: "Air Quality (%)",
-                  color: "Orange",
-                },
-              ]}
-              xAxis={[{ scaleType: "point", data: dataXAxis }]}
-              yAxis={[{ id: "leftAxisId" }, { id: "rightAxisId" }]}
-              slotProps={{ legend: { hidden: true } }}
-            />
-          )}
+        {showChart ? (
+          <LineChart
+            width={710}
+            height={320}
+            series={[
+              {
+                data: showTemp ? dataPoints?.dataPointsTemp : [],
+                label: "Temperature (°C)",
+                color: "Red",
+              },
+              {
+                data: showHumid ? dataPoints?.dataPointsHumid : [],
+                label: "Humidity (%)",
+                color: "Blue",
+              },
+              {
+                data: showAir ? dataPoints?.dataPointsAir : [],
+                label: "Air Quality (%)",
+                color: "Orange",
+              },
+            ]}
+            xAxis={[{ scaleType: "point", data: dataXAxis }]}
+            yAxis={[{ id: "leftAxisId" }, { id: "rightAxisId" }]}
+            slotProps={{ legend: { hidden: true } }}
+          />
+        ) : (
+          <div className="p-16 font-medium">No Data Available</div>
+        )}
       </div>
       <div className="flex flex-row gap-8">
         <div
@@ -359,7 +369,7 @@ function GaugeChartElement({
       </div>
       <div className="relative my-2">
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 font-medium text-xl">
-          {(value || 0) + symbol}
+          {(value > 0 ? value : 0) + symbol}
         </div>
         <Gauge
           width={200}
