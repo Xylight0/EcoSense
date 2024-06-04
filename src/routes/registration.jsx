@@ -47,6 +47,7 @@ function LoginModal() {
     return () => {
       document.removeEventListener("keydown", listener);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [password, email]);
 
   const onLogin = () => {

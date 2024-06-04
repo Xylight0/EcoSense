@@ -4,8 +4,8 @@ import "./index.css";
 import Root from "./routes/root";
 import ErrorPage from "./routes/error-page";
 import Dashboard from "./routes/dashboard";
-/* import Devices from "./routes/devices";
-import Network from "./routes/network";
+import Devices from "./routes/devices";
+/*import Network from "./routes/network";
 import Map from "./routes/map";
 import Help from "./routes/help";
 import Settings from "./routes/settings"; */
@@ -31,7 +31,7 @@ const router = createBrowserRouter([
       },
       {
         path: "devices",
-        element: <ComingSoon />,
+        element: <Devices />,
       },
       {
         path: "network",
