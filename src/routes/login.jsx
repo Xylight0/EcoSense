@@ -1,6 +1,6 @@
 import { FaEnvelope, FaKey } from "react-icons/fa";
 import logo from "../assets/logo.png";
-import dashboardPreview from "../assets/dashboard_preview.png";
+import dashboardPreview from "../assets/dashboard_preview2.png";
 import abstractBG from "../assets/abstract_bg.jpeg";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
