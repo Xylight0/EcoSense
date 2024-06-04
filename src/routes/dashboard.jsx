@@ -1,25 +1,20 @@
 /* eslint-disable react/prop-types */
 import { LineChart } from "@mui/x-charts";
 import { Gauge, gaugeClasses } from "@mui/x-charts/Gauge";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { FaChevronDown, FaClock, FaMobile, FaWind } from "react-icons/fa";
 import { FaArrowTrendUp, FaDroplet, FaTemperatureFull } from "react-icons/fa6";
 import getAllDocumentIds from "../api/getAllDocumentIds";
 import useOutsideAlerter from "../hooks/useOutsideAlerter";
 import moment from "moment";
 import { getRealtimeDocumentData } from "../api/getRealtimeDocumentData";
+import { Context } from "../AuthConext";
+import getDocumentData from "../api/getDocumentData";
 
 export default function Dashboard() {
   const [deviceData, setDeviceData] = useState([]);
   const [deviceIDs, setDeviceIDs] = useState([]);
   const [currentDeviceID, setCurrentDeviceID] = useState("Select Device");
-
-  useEffect(() => {
-    const get = async () => {
-      setDeviceIDs(await getAllDocumentIds({ collectionName: "devices" }));
-    };
-    get();
-  }, []);
 
   useEffect(() => {
     if (!currentDeviceID) return;
@@ -58,6 +53,7 @@ export default function Dashboard() {
       <div>
         <ToolBarElement
           deviceIDs={deviceIDs}
+          setDeviceIDs={setDeviceIDs}
           setCurrentDeviceID={setCurrentDeviceID}
           currentDeviceID={currentDeviceID}
           lastElement={deviceData?.temperature?.slice(-1)[0]}
@@ -103,10 +99,24 @@ function ToolBarElement({
   setCurrentDeviceID,
   currentDeviceID,
   lastElement,
+  setDeviceIDs,
 }) {
   const [active, setActive] = useState(false);
   const wrapperRef = useRef(null);
   useOutsideAlerter({ ref: wrapperRef, stateFnc: setActive });
+
+  const { user } = useContext(Context);
+
+  useEffect(() => {
+    const get = async () => {
+      const userData = await getDocumentData({
+        collectionName: "users",
+        id: user?.uid,
+      });
+      setDeviceIDs(userData?.devices);
+    };
+    get();
+  });
 
   function renderIDs() {
     return deviceIDs.map((id) => {

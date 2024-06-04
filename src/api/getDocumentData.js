@@ -4,12 +4,12 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase";
 
-export default async function getDocumentData({ collectionName, deviceID }) {
-  if (!deviceID) return;
+export default async function getDocumentData({ collectionName, id }) {
+  if (!id) return;
   try {
     //const deviceSnapshot = await getDoc(doc(db, collectionName, deviceID));
 
-    const querySnapshot = await getDoc(doc(db, collectionName, deviceID));
+    const querySnapshot = await getDoc(doc(db, collectionName, id));
 
     if (querySnapshot.exists()) {
       const deviceData = querySnapshot.data();
