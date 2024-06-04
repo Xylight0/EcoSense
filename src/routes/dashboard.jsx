@@ -49,7 +49,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="p-8 overflow-scroll w-fit flex flex-col gap-4">
+    <div className="p-8 overflow-auto w-fit flex flex-col gap-4">
       <div>
         <ToolBarElement
           deviceIDs={deviceIDs}
